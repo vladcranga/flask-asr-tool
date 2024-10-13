@@ -1,0 +1,153 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar-container {
+    width: 20%;
+    background-color: #e3ddd1;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content-container {
+    width: 80%;
+    background-color: #c59b9b;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.record-audio-container button,
+.folder-button,
+.folder-clear {
+    background-color: #e30c0c; 
+    color: #fff;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    width: auto;
+}
+
+.folder-button,
+.folder-clear {
+    background-color: #0074d9;
+    padding: 10px;
+}
+
+#durationDisplay {
+    font-size: 15px;
+}
+
+.folder-file-list {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    max-height: 370px;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    background-color: #dfdbb7;
+    border-radius: 5px;
+}
+
+.file-item {
+    border: 3px solid #bfb5a1;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #bfb5a1;
+    cursor: pointer;
+    transition: background-color 0.5s;
+}
+
+.file-item:hover {
+    background-color: #f6f2cc;
+}
+
+.content-container h3 {
+    font-family: 'Lato', sans-serif;
+    color: #333;
+    font-size: 28px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.content-container p {
+    font-family: 'Lato', sans-serif;
+    color: #494444;
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 20px; 
+    text-align: center;
+}
+
+.controls,
+.transcription-container {
+    width: 100%;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.control-btn {
+    background-color: #7e57c2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.control-btn:hover {
+    background-color: #673ab7;
+}
+
+#volume-control {
+    appearance: slider-horizontal;
+    width: 100px;
+    height: 20px;
+    margin-top: 10px;
+}
+
+.transcription-text {
+    width: 90%; 
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fafafa; 
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    resize: vertical;
+    height: auto;
+}
+
+.transcription-text:focus {
+    border-color: #c8d9ec;
+    background-color: #e6f7ff;
+}
+
+
+.save-transcription {
+    background-color: #0074d9;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#spectrogram-container {
+    width: 100%; 
+    margin-top: 10px;
+}

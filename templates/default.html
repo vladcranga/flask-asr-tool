@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+        <script src="{{ url_for('load_menu_js') }}"></script>
+        <script src="{{ url_for('load_file_explorer_js')}}"></script>
+        <script src="https://unpkg.com/wavesurfer.js"></script>
+        <title>ASR Annotation Tool</title>
+    </head>
+    <body>
+        <div class="sidebar-container">
+            <div class="record-audio-container">
+                <button id="recordButton">Record</button>
+                <button id="pauseButton">Pause</button>
+                <button id="stopButton">Stop &amp Save</button>
+                <p>Recording duration: <span id="durationDisplay">0 seconds</span></p>
+            </div>
+            <div class="folder-selector-container">
+                <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" />
+                <label for="folderInput" id="folderInputLabel" class="folder-button" role="button">
+                    Select Folder
+                </label>
+                <button id="clearFolderButton" class="folder-clear" role="button" disabled>Clear</button>
+                <ul id="folderFileList" class="folder-file-list" role="listbox">
+                    <!-- the audio files from the selected folder will be displayed here -->
+                </ul>
+            </div>
+        </div>        
+        <div id="content-container" class="content-container">
+            <center>
+                <h3>Automatic Speech Recogniser</h3>
+                <p>Load an existing audio file or start recording.</p>
+                <br>
+                <br>
+                <div id="waveform" role="img" aria-label="Audio waveform display"></div>
+                <div class="controls" id="controls" style="display: none;">
+                    <button id="play-btn" class="control-btn" aria-label="Play" role="button">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="pause-btn" class="control-btn" aria-label="Pause" role="button">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button id="stop-btn" class="control-btn" aria-label="Stop" role="button">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                  <input type="range" id="volume-control" class="control-btn" min="0" max="1" step="0.01" value="1"
+                    aria-label="Volume control slider" role="slider">
+                </div>
+                <div class="transcription-container" style="display: none;">
+                    <textarea id="transcription" class="transcription-text" rows="3" aria-label="Generated transcription"
+                      role="textbox"></textarea>
+                    <button id="save-transcription" class="save-transcription" role="button">Save Transcription</button>
+                </div>
+                <div id="spectrogram-container" class="spectrogram-container" role="img"></div>
+            </center>
+        </div>
+    </body>
+</html>
