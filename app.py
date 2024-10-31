@@ -56,6 +56,8 @@ def start_recording_thread():
     record_audio()
 
 def normalize_audio(audio_data):
+    if (audio_data.size == 0):
+        return audio_data
     max_amplitude = np.max(np.abs(audio_data))
     if max_amplitude > 0:
         audio_data_normalized = audio_data / max_amplitude
