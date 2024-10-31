@@ -39,8 +39,7 @@ jobs:
       - name: Lint code with flake8
         run: |
           source .venv/bin/activate
-          pip install flake8
-          flake8 .
+          flake8 ./tests/ ./app.py ./openai_whisper.py --verbose
 
       # Run tests
       - name: Run tests
