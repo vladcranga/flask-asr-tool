@@ -3,8 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const folderInput = document.getElementById('folderInput');
     const clearFolderButton = document.getElementById('clearFolderButton');
     const folderFileList = document.getElementById('folderFileList');
-
-    const contentContainer = document.getElementById('content-container');
+    const spectrogramContainer = document.getElementById('spectrogram-container');
 
     const controlsContainer = document.getElementById('controls')
     const playButton = document.getElementById('play-btn');
@@ -23,13 +22,20 @@ document.addEventListener('DOMContentLoaded', function () {
     function displaySpectrogram(audioFileURL) {
         // remove the previous spectrogram image if it exists
         const previousSpectrogram = document.getElementById('spectrogram');
-            if (previousSpectrogram) {
-                previousSpectrogram.remove();
-            }
+        if (previousSpectrogram) {
+            previousSpectrogram.remove();
+        }
+
+        const spectrogramContainer = document.getElementById('spectrogram-container');
+        spectrogramContainer.classList.remove('hidden');
+        
+        // Get the canvas container for the spectrogram
+        const canvasContainer = spectrogramContainer.querySelector('.spectrogram-canvas-container');        
             
-            // create an image element for the spectrogram
-            const spectrogramImage = document.createElement('img');    
-            spectrogramImage.id = 'spectrogram';
+        // create an image element for the spectrogram
+        const spectrogramImage = document.createElement('img');    
+        spectrogramImage.id = 'spectrogram';
+        spectrogramImage.className = 'w-full max-h-96';
 
         // make a request to flask to generate the spectrogram
         fetch('/generate-spectrogram', {
@@ -45,8 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             reader.onloadend = function () {
                 spectrogramImage.src = reader.result;
                 spectrogramImage.alt = 'A spectrogram of the audio file';
-
-                contentContainer.appendChild(spectrogramImage);
+                canvasContainer.appendChild(spectrogramImage);
             };
             reader.readAsDataURL(blob);
         })
@@ -64,16 +69,18 @@ document.addEventListener('DOMContentLoaded', function () {
             for (const file of files) {
                 if (file.name.endsWith('.wav') || (file.name.endsWith('.mp3'))) {
                     const listItem = document.createElement('li');
-                    listItem.className = 'file-item';
-                    listItem.role = 'option';
-                    listItem.tabIndex = '0';
-
-                    // extract the file name and extension
-                    const fileName = file.name;
-                    listItem.textContent = fileName;
-
+                    listItem.className = 'px-3 py-2 text-gray-300 hover:bg-gray-600 rounded transition-colors duration-150 cursor-pointer flex items-center';
+                    
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-file-audio mr-2 text-blue-400';
+                    
+                    const text = document.createElement('span');
+                    text.textContent = file.name;
+                    text.className = 'truncate';
+                    
+                    listItem.appendChild(icon);
+                    listItem.appendChild(text);
                     folderFileList.appendChild(listItem);
-
                     foundAudioFiles = true;
                 }
             }
@@ -82,26 +89,43 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!foundAudioFiles) {
-            const noFileMessage = document.createElement('li')
-            noFileMessage.className = 'file-item'
-            noFileMessage.textContent = 'No audio files found.'
-
-            folderFileList.appendChild(noFileMessage)
+            const noFileMessage = document.createElement('li');
+            noFileMessage.className = 'text-gray-400 text-sm text-center py-4';
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-music mb-2 text-2xl block';
+            const text = document.createElement('p');
+            text.textContent = 'No audio files found';
+            noFileMessage.appendChild(icon);
+            noFileMessage.appendChild(text);
+            folderFileList.appendChild(noFileMessage);
         }
-
     });
 
     clearFolderButton.addEventListener('click', function () {
         folderInput.value = '';
         folderFileList.innerHTML = '';
         clearFolderButton.disabled = true;
+        // Add back the empty state
+        const emptyState = document.createElement('li');
+        emptyState.className = 'text-gray-400 text-sm text-center py-4';
+        emptyState.id = 'empty-state';
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-music mb-2 text-2xl block';
+        const text = document.createElement('p');
+        text.textContent = 'No audio files selected';
+        emptyState.appendChild(icon);
+        emptyState.appendChild(text);
+        folderFileList.appendChild(emptyState);
     });
 
     function displayAudioDetails(audioFileURL) {
+        // Show waveform container
+        document.getElementById('waveform').classList.remove('hidden');
+        
         // start the visualisation
         wavesurfer.load(audioFileURL);
         wavesurfer.on('ready', function () {
-            controlsContainer.style.display = 'flex';
+            controlsContainer.classList.remove('hidden');  
             playButton.addEventListener('click', () => wavesurfer.play());
             pauseButton.addEventListener('click', () => wavesurfer.pause());
             stopButton.addEventListener('click', () => wavesurfer.stop());
@@ -144,17 +168,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     folderFileList.addEventListener('click', function (event) {
-        const target = event.target;
-        if (target && target.tagName === 'LI') {
-            const fileName = target.textContent;
+        const target = event.target.closest('li');
+        if (target && !target.classList.contains('text-gray-400')) {
+            const fileName = target.querySelector('span').textContent;
             const audioFileURL = '/static/'+fileName;
-
-            // display the selected audio file
+            
+            // Hide empty state
+            document.getElementById('empty-state').classList.add('hidden');
+            
+            // Update selected state
+            folderFileList.querySelectorAll('li').forEach(li => {
+                li.classList.remove('bg-gray-600');
+            });
+            target.classList.add('bg-gray-600');
+            
             displayAudioDetails(audioFileURL);
-            // display the specrtogram 
-            displaySpectrogram(fileName)
-            // display the transcription
-            displayAudioTranscription(fileName)
+            displaySpectrogram(fileName);
+            displayAudioTranscription(fileName);
         }
     });    
 
@@ -176,6 +206,4 @@ document.addEventListener('DOMContentLoaded', function () {
         downloadLink.click();
         document.body.removeChild(downloadLink);
     });
-    
-    
 });
