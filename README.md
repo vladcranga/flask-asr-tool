@@ -1,51 +1,81 @@
-# Automatic Speech Recogniser
+# 🎙️ Automatic Speech Recogniser
 
-This project is an **Automatic Speech Recognition (ASR) Tool** that provides a user-friendly interface for recording, transcribing, editing, and saving speech data. Built using **Flask**, it includes features for recording audio, generating transcriptions using OpenAI Whisper, and visualising audio spectrograms.
+A user-friendly interface for recording, transcribing, and analysing speech data. Built with Flask and OpenAI Whisper for accurate speech recognition.
+
+![ASR Tool Overview](/static/asr-tool.png)
 
 ## Features
-- **Record Audio:** Users can record audio directly in the web interface with simple start, pause, and stop controls.
-- **Audio File Management:** Users can load existing audio files from their system for transcription and analysis.
-- **Interactive UI:** The tool features a waveform viewer for uploaded or recorded audio files.
-- **ASR with Whisper Model:** The recorded audio can be transcribed using OpenAI's Whisper model to generate transcriptions. The result can then be edited and saved.
-- **Spectrogram Generation:** The tool can generate a spectrogram visualisation of recorded or uploaded audio files.
 
-## Requirements
+### Audio Recording & Management
+- **Recording Controls:** Start, pause, and stop functionality
+- **File Management:** Upload and manage existing audio files
+- **Waveform Visualisation:** Interactive audio waveform display
+
+![Recording Controls](/static/asr-buttons.png)
+
+### Analysis & Transcription
+- **Spectrogram Generation:** Visual representation of audio frequencies
+- **OpenAI Whisper Integration:** State-of-the-art speech recognition
+- **Editable Transcriptions:** Review and modify generated transcripts
+
+### File Organization
+- **Clean Interface:** Organised file listing
+- **Quick Access:** Easy navigation between audio files
+- **Visual Feedback:** Clear status indicators
+
+![File Management](/static/asr-files.png)
+
+## Getting Started
+
+### Prerequisites
 - Python 3.x
-- **Flask** for the web framework
-- **Sounddevice** for capturing audio input
-- **Whisper** for automatic speech recognition (ASR)
-- **Matplotlib** for generating spectrograms
-- **Pydub** and **Soundfile** for audio processing
+- Virtual environment (recommended)
 
-## Setup Instructions
-Follow these steps to set up the ASR Annotation Tool:
+### Installation
 
 1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/vladcranga/flask-asr-tool.git
+   cd flask-asr-tool
    ```
-   git clone <repository-url>
-   cd asr-annotation-tool
+
+2. **Set Up Virtual Environment**
+   ```bash
+   python -m venv venv
+   
+   # Windows
+   venv\Scripts\activate
+   
+   # Unix/MacOS
+   source venv/bin/activate
    ```
-2. **Create a Virtual Environment**
-    ```
-    python3 -m venv venv
-    # On Windows use `venv\\Scripts\\activate`
-    source venv/bin/activate
-    ```
-3. **Install the dependencies**
-    ```
-    pip install -r requirements.txt
-    ```
-4. **Run the application**
-    ```
-    python -m flask run
-    ```
-The application will run at http://127.0.0.1:5000/ by default.
 
-## License
+3. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-This project uses publicly available libraries and datasets. However, always check individual licenses for compliance when extending or deploying this tool.
+4. **Launch the Application**
+   ```bash
+   python -m flask run
+   ```
+   Access the tool at http://127.0.0.1:5000/
 
-- LibriSpeech Data: LibriSpeech recordings used with this tool are public domain (courtesy of LibriVox).
-- OpenAI Whisper: OpenAI's Whisper model is used under its respective usage policy.
+## Tech Stack
+- **Backend:** Flask (Python)
+- **Audio Processing:** 
+  - Sounddevice
+  - Soundfile
+  - Pydub
+- **ML Model:** OpenAI Whisper
+- **Visualisation:** 
+  - WaveSurfer.js
+  - Matplotlib
 
-![example picture](/static/example.png)
+## 📝 License
+
+This project incorporates several open-source components:
+
+- **LibriSpeech Data:** Public domain (courtesy of LibriVox)
+- **OpenAI Whisper:** Used under OpenAI's usage policy
+- **Other Components:** See individual licenses for details
