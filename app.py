@@ -25,7 +25,10 @@ def load_menu_js():
 
 @app.route("/static/file_explorer.js")
 def load_file_explorer_js():
-    return send_file("static/file_explorer.js", mimetype="application/javascript")
+    return send_file(
+        "static/file_explorer.js",
+        mimetype="application/javascript"
+    )
 
 
 # the main page of the website
@@ -92,9 +95,10 @@ def start_recording():
         record_thread.start()
         return jsonify({"status": "recording"})
 
-    return jsonify(
-        {"status": "recording" if recording else "paused" if paused else "stopped"}
-    )
+    status = "recording"
+    if not recording:
+        status = "paused" if paused else "stopped"
+    return jsonify({"status": status})
 
 
 @app.route("/pause-recording", methods=["POST"])
@@ -126,9 +130,12 @@ def resume_recording():
         record_thread.start()
         return jsonify({"status": "recording"})
 
-    return jsonify(
-        {"status": "recording" if recording else "paused" if paused else "stopped"}
-    )
+    status = "stopped"
+    if recording:
+        status = "recording"
+    elif paused:
+        status = "paused"
+    return jsonify({"status": status})
 
 
 @app.route("/stop-recording", methods=["POST"])
@@ -150,16 +157,17 @@ def stop_recording():
         save_path = os.path.join(directory, filename)
         wavio.write(save_path, audio_data_normalized, sample_rate, sampwidth=2)
 
-        return jsonify({"status": "stopped"})
-
         # clear the audio data
         clear_audio_data()
 
         return jsonify({"status": "stopped"})
 
-    return jsonify(
-        {"status": "recording" if recording else "paused" if paused else "stopped"}
-    )
+    status = "stopped"
+    if recording:
+        status = "recording"
+    elif paused:
+        status = "paused"
+    return jsonify({"status": status})
 
 
 @app.route("/generate-spectrogram", methods=["POST"])
@@ -207,7 +215,9 @@ def get_transcript_whisper():
     try:
         audio_file_name = request.get_json("fileName")
 
-        transcript = openai_whisper.get_transcription(audio_file_name["fileName"])
+        transcript = openai_whisper.get_transcription(
+            audio_file_name["fileName"]
+        )
 
         # return the transcript
         return jsonify({"transcript": transcript})
