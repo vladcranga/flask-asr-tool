@@ -1,181 +1,277 @@
-<!DOCTYPE html>
+<!doctype html>
 <html class="h-full bg-gray-100">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="{{ url_for('load_menu_js') }}"></script>
-        <script src="{{ url_for('load_file_explorer_js')}}"></script>
-        <script src="https://unpkg.com/wavesurfer.js"></script>
-        <title>ASR Annotation Tool</title>
-    </head>
-    <body class="h-full overflow-hidden">
-        <div class="min-h-full">
-            <div class="flex">
-                <!-- Sidebar -->
-                <div class="w-64 bg-gray-800 h-screen fixed left-0">
-                    <div class="p-4">
-                        <div class="space-y-4">
-                            <!-- Recording Controls -->
-                            <div class="space-y-2">
-                                <button id="recordButton" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center">
-                                    <i class="fas fa-microphone mr-2"></i>Record
-                                </button>
-                                <button id="pauseButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center">
-                                    <i class="fas fa-pause mr-2"></i>Pause
-                                </button>
-                                <button id="stopButton" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center">
-                                    <i class="fas fa-stop mr-2"></i>Stop & Save
-                                </button>
-                                <p class="text-gray-300 text-sm font-mono">Recording duration: <span id="durationDisplay" class="font-mono">0 seconds</span></p>
-                            </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='favicon.ico') }}"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ url_for('load_menu_js') }}"></script>
+    <script src="{{ url_for('load_file_explorer_js')}}"></script>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <title>ASR Annotation Tool</title>
+  </head>
+  <body class="h-full overflow-hidden">
+    <div class="min-h-full">
+      <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 h-screen fixed left-0">
+          <div class="p-4">
+            <div class="space-y-4">
+              <!-- Recording Controls -->
+              <div class="space-y-2">
+                <button
+                  id="recordButton"
+                  class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center"
+                >
+                  <i class="fas fa-microphone mr-2"></i>Record
+                </button>
+                <button
+                  id="pauseButton"
+                  class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center"
+                >
+                  <i class="fas fa-pause mr-2"></i>Pause
+                </button>
+                <button
+                  id="stopButton"
+                  class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center"
+                >
+                  <i class="fas fa-stop mr-2"></i>Stop & Save
+                </button>
+                <p class="text-gray-300 text-sm font-mono">
+                  Recording duration:
+                  <span id="durationDisplay" class="font-mono">0 seconds</span>
+                </p>
+              </div>
 
-                            <!-- Folder Selection -->
-                            <div class="space-y-2">
-                                <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden" />
-                                <label for="folderInput" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer block text-center transition duration-150 ease-in-out flex items-center justify-center">
-                                    <i class="fas fa-folder-open mr-2"></i>Select Folder
-                                </label>
-                                <button id="clearFolderButton" disabled class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center">
-                                    <i class="fas fa-trash mr-2"></i>Clear
-                                </button>
-                            </div>
+              <!-- Folder Selection -->
+              <div class="space-y-2">
+                <input
+                  type="file"
+                  id="folderInput"
+                  webkitdirectory
+                  directory
+                  multiple
+                  class="hidden"
+                />
+                <label
+                  for="folderInput"
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer block text-center transition duration-150 ease-in-out flex items-center justify-center"
+                >
+                  <i class="fas fa-folder-open mr-2"></i>Select Folder
+                </label>
+                <button
+                  id="clearFolderButton"
+                  disabled
+                  class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center"
+                >
+                  <i class="fas fa-trash mr-2"></i>Clear
+                </button>
+              </div>
 
-                            <!-- File List -->
-                            <div class="mt-4 text-center">
-                                <h3 class="text-gray-300 text-sm font-semibold mb-2">Audio Files</h3>
-                                <ul id="folderFileList" class="space-y-1 overflow-y-auto overflow-x-hidden
-                                    rounded-lg bg-gray-700 p-2 min-h-[300px] max-h-[calc(100vh-400px)]">
-                                    <li class="text-gray-400 text-sm text-center py-4">
-                                        <i class="fas fa-music mb-2 text-2xl"></i>
-                                        <p>No audio files selected</p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Main Content -->
-                <div class="flex-1 ml-64 h-screen overflow-y-auto">
-                    <main class="p-8">
-                        <div class="max-w-7xl mx-auto">
-                            <div class="bg-white shadow-lg rounded-lg p-6">
-                                <h1 class="text-4xl font-extrabold text-gray-900 mb-4 text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-[3rem]">Automatic Speech Recogniser</h1>
-
-                                <!-- Empty State -->
-                                <div id="empty-state" class="text-center py-12 bg-gray-50 rounded-lg mb-6">
-                                    <i class="fas fa-wave-square text-4xl text-gray-400 mb-4"></i>
-                                    <h3 class="text-lg font-medium text-gray-900">No Audio Selected</h3>
-                                    <p class="text-gray-500 mt-2">Select an audio file from the sidebar or start recording to begin</p>
-                                </div>
-
-                                <!-- Waveform -->
-                                <div id="waveform" class="mb-6 bg-gray-50 rounded-lg p-4 hidden"></div>
-
-                                <!-- Audio Controls -->
-                                <div id="controls" class="flex items-center justify-center space-x-4 mb-6 hidden">
-                                    <button id="play-btn" class="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-150 ease-in-out text-gray-700">
-                                        <i class="fas fa-play"></i>
-                                    </button>
-                                    <button id="pause-btn" class="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-150 ease-in-out text-gray-700">
-                                        <i class="fas fa-pause"></i>
-                                    </button>
-                                    <button id="stop-btn" class="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-150 ease-in-out text-gray-700">
-                                        <i class="fas fa-stop"></i>
-                                    </button>
-                                    <input type="range" id="volume-control" class="w-32" min="0" max="1" step="0.01" value="1">
-                                </div>
-
-                                <!-- Transcription -->
-                                <div class="transcription-container space-y-4 hidden">
-                                    <textarea id="transcription" class="w-full p-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Transcription will appear here..."></textarea>
-                                    <button id="save-transcription" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center">
-                                        <i class="fas fa-save mr-2"></i>Save Transcription
-                                    </button>
-                                </div>
-
-                                <!-- Spectrogram -->
-                                <div id="spectrogram-container" class="mt-6 bg-gray-50 rounded-lg p-4 hidden">
-                                    <h3 class="text-xl font-bold text-gray-800 mb-3 text-center tracking-wide">Spectrogram Analysis</h3>
-                                    <div class="spectrogram-canvas-container bg-white rounded border p-2 flex items-center justify-center"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </main>
-                </div>
+              <!-- File List -->
+              <div class="mt-4 text-center">
+                <h3 class="text-gray-300 text-sm font-semibold mb-2">
+                  Audio Files
+                </h3>
+                <ul
+                  id="folderFileList"
+                  class="space-y-1 overflow-y-auto overflow-x-hidden rounded-lg bg-gray-700 p-2 min-h-[300px] max-h-[calc(100vh-400px)]"
+                >
+                  <li class="text-gray-400 text-sm text-center py-4">
+                    <i class="fas fa-music mb-2 text-2xl"></i>
+                    <p>No audio files selected</p>
+                  </li>
+                </ul>
+              </div>
             </div>
+          </div>
         </div>
 
-        <style>
-            /* Custom scrollbar for the file list */
-            #folderFileList::-webkit-scrollbar {
-                width: 6px;
-            }
-            
-            #folderFileList::-webkit-scrollbar-track {
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 3px;
-            }
-            
-            #folderFileList::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 3px;
-            }
-            
-            #folderFileList::-webkit-scrollbar-thumb:hover {
-                background: rgba(255, 255, 255, 0.3);
-            }
-        </style>
+        <!-- Main Content -->
+        <div class="flex-1 ml-64 h-screen overflow-y-auto">
+          <main class="p-8">
+            <div class="max-w-7xl mx-auto">
+              <div class="bg-white shadow-lg rounded-lg p-6">
+                <h1
+                  class="text-4xl font-extrabold text-gray-900 mb-4 text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-[3rem]"
+                >
+                  Automatic Speech Recogniser
+                </h1>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const fileList = document.getElementById('folderFileList');
-                
-                // Function to create styled file items
-                window.createFileItem = function(filename) {
-                    const li = document.createElement('li');
-                    li.className = 'px-3 py-2 text-gray-300 hover:bg-gray-600 rounded transition-colors duration-150 cursor-pointer flex items-center';
-                    
-                    const icon = document.createElement('i');
-                    icon.className = 'fas fa-file-audio mr-2 text-blue-400';
-                    
-                    const text = document.createElement('span');
-                    text.textContent = filename;
-                    text.className = 'truncate';
-                    
-                    li.appendChild(icon);
-                    li.appendChild(text);
-                    
-                    return li;
-                };
+                <!-- Empty State -->
+                <div
+                  id="empty-state"
+                  class="text-center py-12 bg-gray-50 rounded-lg mb-6"
+                >
+                  <i class="fas fa-wave-square text-4xl text-gray-400 mb-4"></i>
+                  <h3 class="text-lg font-medium text-gray-900">
+                    No Audio Selected
+                  </h3>
+                  <p class="text-gray-500 mt-2">
+                    Select an audio file from the sidebar or start recording to
+                    begin
+                  </p>
+                </div>
 
-                // Function to show/hide empty state
-                window.toggleEmptyState = function(show) {
-                    const emptyState = document.getElementById('empty-state');
-                    const waveform = document.getElementById('waveform');
-                    const controls = document.getElementById('controls');
-                    const spectrogramContainer = document.getElementById('spectrogram-container');
-                    
-                    if (show) {
-                        emptyState.classList.remove('hidden');
-                        waveform.classList.add('hidden');
-                        controls.classList.add('hidden');
-                        spectrogramContainer.classList.add('hidden');
-                    } else {
-                        emptyState.classList.add('hidden');
-                        waveform.classList.remove('hidden');
-                        controls.classList.remove('hidden');
-                        spectrogramContainer.classList.remove('hidden');
-                    }
-                };
+                <!-- Waveform -->
+                <div
+                  id="waveform"
+                  class="mb-6 bg-gray-50 rounded-lg p-4 hidden"
+                ></div>
 
-                // Show empty state by default
-                toggleEmptyState(true);
-            });
-        </script>
-    </body>
+                <!-- Audio Controls -->
+                <div
+                  id="controls"
+                  class="flex items-center justify-center space-x-4 mb-6 hidden"
+                >
+                  <button
+                    id="play-btn"
+                    class="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-150 ease-in-out text-gray-700"
+                  >
+                    <i class="fas fa-play"></i>
+                  </button>
+                  <button
+                    id="pause-btn"
+                    class="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-150 ease-in-out text-gray-700"
+                  >
+                    <i class="fas fa-pause"></i>
+                  </button>
+                  <button
+                    id="stop-btn"
+                    class="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-150 ease-in-out text-gray-700"
+                  >
+                    <i class="fas fa-stop"></i>
+                  </button>
+                  <input
+                    type="range"
+                    id="volume-control"
+                    class="w-32"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="1"
+                  />
+                </div>
+
+                <!-- Transcription -->
+                <div class="transcription-container space-y-4 hidden">
+                  <textarea
+                    id="transcription"
+                    class="w-full p-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    rows="3"
+                    placeholder="Transcription will appear here..."
+                  ></textarea>
+                  <button
+                    id="save-transcription"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded transition duration-150 ease-in-out flex items-center justify-center"
+                  >
+                    <i class="fas fa-save mr-2"></i>Save Transcription
+                  </button>
+                </div>
+
+                <!-- Spectrogram -->
+                <div
+                  id="spectrogram-container"
+                  class="mt-6 bg-gray-50 rounded-lg p-4 hidden"
+                >
+                  <h3
+                    class="text-xl font-bold text-gray-800 mb-3 text-center tracking-wide"
+                  >
+                    Spectrogram Analysis
+                  </h3>
+                  <div
+                    class="spectrogram-canvas-container bg-white rounded border p-2 flex items-center justify-center"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      /* Custom scrollbar for the file list */
+      #folderFileList::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #folderFileList::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      #folderFileList::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+      }
+
+      #folderFileList::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    </style>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const fileList = document.getElementById("folderFileList");
+
+        // Function to create styled file items
+        window.createFileItem = function (filename) {
+          const li = document.createElement("li");
+          li.className =
+            "px-3 py-2 text-gray-300 hover:bg-gray-600 rounded transition-colors duration-150 cursor-pointer flex items-center";
+
+          const icon = document.createElement("i");
+          icon.className = "fas fa-file-audio mr-2 text-blue-400";
+
+          const text = document.createElement("span");
+          text.textContent = filename;
+          text.className = "truncate";
+
+          li.appendChild(icon);
+          li.appendChild(text);
+
+          return li;
+        };
+
+        // Function to show/hide empty state
+        window.toggleEmptyState = function (show) {
+          const emptyState = document.getElementById("empty-state");
+          const waveform = document.getElementById("waveform");
+          const controls = document.getElementById("controls");
+          const spectrogramContainer = document.getElementById(
+            "spectrogram-container",
+          );
+
+          if (show) {
+            emptyState.classList.remove("hidden");
+            waveform.classList.add("hidden");
+            controls.classList.add("hidden");
+            spectrogramContainer.classList.add("hidden");
+          } else {
+            emptyState.classList.add("hidden");
+            waveform.classList.remove("hidden");
+            controls.classList.remove("hidden");
+            spectrogramContainer.classList.remove("hidden");
+          }
+        };
+
+        // Show empty state by default
+        toggleEmptyState(true);
+      });
+    </script>
+  </body>
 </html>
