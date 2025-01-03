@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from openai_whisper import get_transcription
 
 

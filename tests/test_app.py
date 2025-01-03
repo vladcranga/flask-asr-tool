@@ -1,7 +1,9 @@
-import pytest
-import warnings
-from app import app
 import os
+import warnings
+
+import pytest
+
+from app import app
 
 
 @pytest.fixture
