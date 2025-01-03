@@ -1,5 +1,6 @@
-import whisper
 from pathlib import Path
+
+import whisper
 
 MODEL = whisper.load_model("small")
 AUDIO_DIR = Path(__file__).parent / "static"

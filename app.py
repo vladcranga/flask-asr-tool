@@ -1,15 +1,18 @@
-from flask import Flask, send_file, render_template, request, jsonify
+import os
+import sys
+import threading
 from io import BytesIO
+
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 import sounddevice as sd
 import soundfile as sf
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib
 import wavio
-import threading
-import sys
-import os
+from flask import Flask, jsonify, render_template, request, send_file
+
 import openai_whisper
+
 matplotlib.use("Agg")
 
 app = Flask(__name__)
@@ -23,7 +26,9 @@ def load_menu_js():
 @app.route("/static/file_explorer.js")
 def load_file_explorer_js():
     return send_file(
-        "static/file_explorer.js", mimetype="application/javascript")
+        "static/file_explorer.js",
+        mimetype="application/javascript"
+    )
 
 
 # the main page of the website
@@ -90,12 +95,10 @@ def start_recording():
         record_thread.start()
         return jsonify({"status": "recording"})
 
-    return jsonify(
-        {
-            "status": "recording" if recording
-            else "paused" if paused else "stopped"
-        }
-    )
+    status = "recording"
+    if not recording:
+        status = "paused" if paused else "stopped"
+    return jsonify({"status": status})
 
 
 @app.route("/pause-recording", methods=["POST"])
@@ -127,12 +130,12 @@ def resume_recording():
         record_thread.start()
         return jsonify({"status": "recording"})
 
-    return jsonify(
-        {
-            "status": "recording" if recording
-            else "paused" if paused else "stopped"
-        }
-    )
+    status = "stopped"
+    if recording:
+        status = "recording"
+    elif paused:
+        status = "paused"
+    return jsonify({"status": status})
 
 
 @app.route("/stop-recording", methods=["POST"])
@@ -154,19 +157,17 @@ def stop_recording():
         save_path = os.path.join(directory, filename)
         wavio.write(save_path, audio_data_normalized, sample_rate, sampwidth=2)
 
-        return jsonify({"status": "stopped"})
-
         # clear the audio data
         clear_audio_data()
 
         return jsonify({"status": "stopped"})
 
-    return jsonify(
-        {
-            "status": "recording" if recording
-            else "paused" if paused else "stopped"
-        }
-    )
+    status = "stopped"
+    if recording:
+        status = "recording"
+    elif paused:
+        status = "paused"
+    return jsonify({"status": status})
 
 
 @app.route("/generate-spectrogram", methods=["POST"])
@@ -206,9 +207,7 @@ def generate_spectrogram():
 
     except Exception as e:
         print(f"Error generating spectrogram: {str(e)}")
-        return jsonify(
-            {"error": "Failed to generate spectrogram"}
-        ), 500
+        return jsonify({"error": "Failed to generate spectrogram"}), 500
 
 
 @app.route("/get-transcript-whisper", methods=["POST"])
@@ -217,7 +216,8 @@ def get_transcript_whisper():
         audio_file_name = request.get_json("fileName")
 
         transcript = openai_whisper.get_transcription(
-            audio_file_name["fileName"])
+            audio_file_name["fileName"]
+        )
 
         # return the transcript
         return jsonify({"transcript": transcript})
